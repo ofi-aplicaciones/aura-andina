@@ -148,6 +148,9 @@ async function refresh(){
  }catch(e){$('sync').textContent='No se pudo consultar la guía publicada. Se conserva la copia disponible.';console.error(e)}
  finally{clearTimeout(timeout);$('reload').disabled=false}
 }
-$('q').oninput=render;$('reload').onclick=refresh;
+$('q').oninput=()=>{
+ if($('q').value.trim()){featuredOnly=false;selectedCat='';selectedSub='';renderFilters();}
+ render();
+};$('reload').onclick=refresh;
 refresh();
 </script></body></html>
