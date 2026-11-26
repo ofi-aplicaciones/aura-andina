@@ -66,17 +66,17 @@ function renderFilters(){
  function redraw(){renderFilters();render()}
  add(views,'★ Destacados',true,featuredOnly,()=>{featuredOnly=true;selectedCat='';selectedSub='';redraw()});
  add(views,'Todas las recomendaciones',false,featuredOnly,()=>{featuredOnly=false;selectedCat='';selectedSub='';redraw()});
- add(container,'Todas las categorías','',selectedCat,()=>{selectedCat='';selectedSub='';redraw()});
- for(const g of groups.filter(g=>data.some(x=>x.groupIds.includes(g.id))))add(container,[g.icon,g.name].filter(Boolean).join(' '),g.id,selectedCat,()=>{selectedCat=g.id;selectedSub='';redraw()});
+ add(container,'Todas las categorías','',featuredOnly===null?selectedCat:null,()=>{featuredOnly=null;selectedCat='';selectedSub='';redraw()});
+ for(const g of groups.filter(g=>data.some(x=>x.groupIds.includes(g.id))))add(container,[g.icon,g.name].filter(Boolean).join(' '),g.id,featuredOnly===null?selectedCat:null,()=>{featuredOnly=null;selectedCat=g.id;selectedSub='';redraw()});
  const available=subgroups.filter(s=>s.parent===selectedCat&&data.some(x=>x.subIds.includes(s.id)));
  $('sub-panel').hidden=!selectedCat||!available.length;
  $('sub-context').textContent=groups.find(g=>g.id===selectedCat)?.name||'';
- if(!$('sub-panel').hidden){add(sub,'Todas las subcategorías','',selectedSub,()=>{selectedSub='';redraw()});for(const s of available)add(sub,[s.icon,s.name].filter(Boolean).join(' '),s.id,selectedSub,()=>{selectedSub=s.id;redraw()})}
+ if(!$('sub-panel').hidden){add(sub,'Todas las subcategorías','',selectedSub,()=>{featuredOnly=null;selectedSub='';redraw()});for(const s of available)add(sub,[s.icon,s.name].filter(Boolean).join(' '),s.id,selectedSub,()=>{featuredOnly=null;selectedSub=s.id;redraw()})}
 }
 function render(){
  const q=norm($('q').value.trim());
- const scoped=Boolean(selectedCat||selectedSub);
- const onlyFeatured=featuredOnly&&!scoped;
+ const scoped=featuredOnly===null;
+ const onlyFeatured=featuredOnly===true;
  const list=data.filter(x=>(!onlyFeatured||x.destacado===true)&&(!selectedCat||x.groupIds.includes(selectedCat))&&(!selectedSub||x.subIds.includes(selectedSub))&&norm([x.name,...x.categories,...x.groupIds.map(id=>groups.find(g=>g.id===id)?.name||''),...x.notes].join(' ')).includes(q)).sort((a,b)=>Number(b.destacado===true)-Number(a.destacado===true));
  $('count').textContent=list.length+(list.length===1?' lugar':' lugares')+(scoped?' · Destacados primero':onlyFeatured?' · Destacados':'');$('grid').replaceChildren();
  if(!list.length){const empty=document.createElement('p');empty.className='empty-state';empty.textContent=onlyFeatured?'No hay recomendaciones destacadas para esta selección.':'No hay recomendaciones para esta selección.';$('grid').append(empty)}
