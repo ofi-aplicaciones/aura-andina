@@ -29,7 +29,11 @@ jobs:
         run: |
           mkdir -p _site/data
           cp index.html _site/
+          cp manifest.webmanifest _site/
+          cp sw.js _site/
+          cp icon-*.png _site/
           cp data/guia.json _site/data/
+
 
       - uses: actions/upload-pages-artifact@v3
         with:
