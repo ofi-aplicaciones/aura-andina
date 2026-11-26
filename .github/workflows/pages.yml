@@ -34,7 +34,11 @@ jobs:
           cp icon-*.png _site/
           cp data/guia.json _site/data/
 
-
+      - name: Generar códigos QR
+        run: |
+          python3 -m pip install qrcode==8.2
+          python3 scripts/generar_qr.py
+          
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
